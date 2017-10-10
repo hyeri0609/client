@@ -7,6 +7,7 @@ import ManageChannels from '../chat/manage-channels/container'
 import CreateChannel from '../chat/create-channel/container'
 import ReallyLeaveTeam from './really-leave-team/container'
 import RolePicker from './role-picker/container'
+import Member from './team/member/container'
 import Team from './team/container'
 import {isMobile} from '../constants/platform'
 
@@ -20,6 +21,14 @@ const makeManageChannels = () => ({
     children: {},
     component: CreateChannel,
     tags: {hideStatusBar: true, layerOnTop: !isMobile},
+  },
+})
+
+const makeRolePicker = () => ({
+  rolePicker: {
+    children: {},
+    component: RolePicker,
+    tags: {layerOnTop: !isMobile},
   },
 })
 
@@ -41,15 +50,15 @@ const routeTree = new RouteDefNode({
     team: {
       children: {
         ...makeManageChannels(),
+        ...makeRolePicker(),
         reallyLeaveTeam: {
           children: {},
           component: ReallyLeaveTeam,
           tags: {layerOnTop: !isMobile},
         },
-        rolePicker: {
-          children: {},
-          component: RolePicker,
-          tags: {layerOnTop: !isMobile},
+        member: {
+          children: makeRolePicker(),
+          component: Member,
         },
       },
       component: Team,
