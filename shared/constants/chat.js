@@ -280,6 +280,7 @@ export const InboxStateRecord = Record({
   membersType: 0,
   notifications: null,
   participants: List(),
+  fullNames: Map(),
   state: 'untrusted',
   status: 'unfiled',
   time: 0,
@@ -299,6 +300,7 @@ export type InboxState = KBRecord<{
   membersType: ChatTypes.ConversationMembersType,
   notifications: NotificationsState,
   participants: List<string>,
+  fullNames: Map<string, string>,
   state: 'untrusted' | 'unboxed' | 'error' | 'unboxing',
   status: ConversationStateEnum,
   time: number,
@@ -1116,9 +1118,15 @@ const getParticipantsWithFullNames = createSelector(
     if (selected && isPendingConversationIDKey(selected)) {
       return []
     } else if (selected !== nothingSelected && selectedInbox) {
-      return selectedInbox.participants.join(',')
+      return selectedInbox.participants.map(username => {
+        const item: any = {username: username}
+        item.fullname = selectedInbox.fullNames.get(username)
+          ? (item.fullname = selectedInbox.fullNames.get(username))
+          : 'Unknown'
+        return item
+      })
     }
-    return ''
+    return []
   }
 )
 
@@ -1354,6 +1362,7 @@ export {
   getYou,
   getFollowingMap,
   getMetaDataMap,
+  getParticipantsWithFullNames,
   getSelectedInbox,
   getTLF,
   getMuted,
